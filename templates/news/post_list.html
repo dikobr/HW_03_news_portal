@@ -1,0 +1,43 @@
+<!--  наследуемся от шаблона default.html -->
+{% extends 'flatpages/default.html' %}
+{% load censor_filter %}
+
+{% block title %}
+News
+{% endblock title %}
+
+{% block content %}
+{{ flatpage.content }}
+<center>
+    <h1>Список всех новостей</h1>
+    <h2>Всего новостей: {{ news|length }}</h2>
+</center>
+
+<h3> Сегодня: {{ time_now|date:'M d Y' }} Время: {{ time_now|date:'H:i' }} </h3>
+
+
+<hr>
+{% if news %}
+<table>
+    <tr>
+        <td>Заголовок</td>
+        <td>Дата публикации</td>
+        <td>Содержание</td>
+        <td>Рейтинг</td>
+    </tr>
+
+{% for post in news%}
+    <tr>
+        <td>{{ post.title|censor }}</td>
+        <td>{{ post.created_at|date:'d M Y' }}</td>
+        <td>{{ post.content|truncatechars:20|censor }}</td>
+        <td>{{ post.rating }}</td>
+    </tr>
+{% endfor %}
+</table>
+{% else %}
+    <h2>Новостей нет!</h2>
+{% endif %}
+<br>
+
+{% endblock content %}

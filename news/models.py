@@ -8,6 +8,9 @@ class Author(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     rating = models.FloatField(default=0)
 
+    def __str__(self):
+        return self.user.username
+
     def update_rating(self):
         posts_rating = self.posts.aggregate(pr=Coalesce(Sum('rating'), 0))['pr']
         comments_rating = self.user.comments.aggregate(cr=Coalesce(Sum('rating'), 0))['cr']
@@ -19,6 +22,9 @@ class Author(models.Model):
 
 class Category(models.Model):
     name = models.CharField(max_length=100, unique=True)
+
+    def __str__(self):
+        return self.name
 
 
 class Post(models.Model):
@@ -50,6 +56,9 @@ class Post(models.Model):
         self.rating -= 1
         self.save()
 
+    def __str__(self):
+        return f'Заголовок: {self.title}. Содержание: {self.content}. {self.created_at}. Рейтинг: {self.rating}'
+
 
 class PostCategory(models.Model):
     post = models.ForeignKey('Post', on_delete=models.CASCADE)
@@ -70,3 +79,6 @@ class Comment(models.Model):
     def dislike(self):
         self.rating -= 1
         self.save()
+
+    def __str__(self):
+        return self.post.content
